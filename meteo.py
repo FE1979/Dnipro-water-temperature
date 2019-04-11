@@ -111,8 +111,18 @@ def get_review_date(review_header):
     return day, month, year
 
 
-t = get_text(get_page())
-date = get_review_date(t[0])
-wt = get_water_temp(t[1])
-reserve  = get_reservoir_data(t[1])
-print(reserve)
+def run_meteo():
+    """ Runs parsing meteo.gov.ua
+    """
+
+    PAGE = get_page()
+    review_data = get_text(PAGE)
+
+    date = get_review_date(review_data[0])
+    water_temperature = get_water_temp(review_data[1])
+    reserve = get_reservoir_data(review_data[1])
+
+    return date, water_temperature, reserve
+
+if __name__ == "__main__":
+    print(run_meteo())
