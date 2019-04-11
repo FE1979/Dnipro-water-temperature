@@ -43,7 +43,26 @@ def get_water_temp(review_text):
         :rtype: float
     """
 
-    pass
+    # get paragraph with temperature
+    regex = r"Рівень.*Дніпро.*град."
+
+    dnipro_match = re.search(regex, review_text)
+    dnipro_info_string = review_text[dnipro_match.start():dnipro_match.end()]
+
+    # remove all before temperature numbers
+    regex = r"Рівень .+ дорівнювала "
+    temp_string = re.sub(regex, '', dnipro_info_string)
+
+    # get exactly numbers with possible delimiter
+    regex = r"\d+\S*"
+    temp_match = re.search(regex, temp_string)
+    temperature = temp_string[temp_match.start() : temp_match.end()]
+
+    # replace comma with point and convert to float
+    regex = r","
+    temperature = float(re.sub(regex, '.', temperature))
+
+    return temperature
 
 def get_reservoir_data(review_text):
     """ Get current filling of reservoirs
@@ -80,4 +99,5 @@ def get_review_date(review_header):
 
 t = get_text(get_page())
 date = get_review_date(t[0])
-print(date)
+wt = get_water_temp(t[1])
+print(wt)
