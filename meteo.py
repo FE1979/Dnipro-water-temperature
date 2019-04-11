@@ -91,6 +91,7 @@ def get_review_date(review_header):
         :return: numbers of a day, month and year
         :rtype: tuple
     """
+
     months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
                 'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня']
 
@@ -113,6 +114,11 @@ def get_review_date(review_header):
 
 def run_meteo():
     """ Runs parsing meteo.gov.ua
+        :return: parsed data
+        :rtype: tuple of hte next data:
+            :date:              numbers tuple of day, month and year
+            :water_temperature: float
+            :reserve:           two floats - filling and free capacity
     """
 
     PAGE = get_page()
@@ -123,6 +129,7 @@ def run_meteo():
     reserve = get_reservoir_data(review_data[1])
 
     return date, water_temperature, reserve
+
 
 if __name__ == "__main__":
     print(run_meteo())
