@@ -66,11 +66,25 @@ def get_water_temp(review_text):
 
 def get_reservoir_data(review_text):
     """ Get current filling of reservoirs
-        :return: filling
+        :return: filling and free capacity
         :rtype: float
     """
 
-    pass
+    regex = r"Наповнення.+км"
+    reservoirs_paragraph = re.findall(regex, review_text)
+
+    regex = r"Наповнення.+становить "
+    reservoirs_text = re.sub(regex, '', reservoirs_paragraph[0])
+
+    regex = r"\d+\S*"
+    reservoirs_data = re.findall(regex, reservoirs_text)
+
+    # replace comma with point and convert to float
+    regex = r","
+    reservoirs_fill = float(re.sub(regex, '.', reservoirs_data[0]))
+    reservoirs_free = float(re.sub(regex, '.', reservoirs_data[1]))
+
+    return reservoirs_fill, reservoirs_free
 
 def get_review_date(review_header):
     """ Gets review date
@@ -100,4 +114,5 @@ def get_review_date(review_header):
 t = get_text(get_page())
 date = get_review_date(t[0])
 wt = get_water_temp(t[1])
-print(wt)
+reserve  = get_reservoir_data(t[1])
+print(reserve)
