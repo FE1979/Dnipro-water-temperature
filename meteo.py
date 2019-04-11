@@ -23,8 +23,8 @@ def get_page():
 def get_text(PAGE):
     """ Parse hydrology review from loaded page
         :input: loaded html page
-        :return: review text
-        :rtype: str
+        :return: review header and text
+        :rtype: tuple
     """
 
     soup = BeautifulSoup(PAGE, "html.parser")
@@ -33,7 +33,9 @@ def get_text(PAGE):
     main_text = main_text.find('div')
     main_text = main_text.find('div')
 
-    return main_text.text
+    review_header = main_text.find('p').text
+
+    return review_header, main_text.text
 
 
 def get_water_temp(review_text):
@@ -51,13 +53,31 @@ def get_reservoir_data(review_text):
 
     pass
 
-def get_review_date(review_text):
+def get_review_date(review_header):
     """ Gets review date
-        :rtype: time
+        :return: numbers of a day, month and year
+        :rtype: tuple
     """
+    months = ['січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
+                'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня']
 
-    pass
+    regex = r"год\."
+
+    date_pos = re.search(regex, review_header)
+    date_string = review_header[date_pos.end() + 1:]
+
+    regex = r" "
+    words = date_string.split(regex)
+
+    day = int(words[0])
+
+    month = months.index(words[1]) + 1
+
+    year = int(words[2])
+
+    return day, month, year
 
 
-
-print(get_text(get_page()))
+t = get_text(get_page())
+date = get_review_date(t[0])
+print(date)
