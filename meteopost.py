@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import time
-# import plotly
+import plotly.plotly as py
 
 
 def get_page(date):
@@ -31,8 +31,8 @@ def get_page(date):
 
 def get_weather_table(PAGE):
     """ Get weather archive table from a page
-        :return:
-        :rtype:
+        :return: text copy of weather archive table
+        :rtype: list
     """
 
     soup = BeautifulSoup(PAGE, 'html.parser')
@@ -41,20 +41,36 @@ def get_weather_table(PAGE):
 
     rows = table.find_all('tr')
 
-    print(len(rows))
+    weather_table = []
 
     for item in rows:
         colls = item.find_all('td')
         for val in colls:
             if val.text:
-                print(val.text)
+                weather_table[-1].append(val.text)
             else:
                 img = val.find('img')
-                print(img.attrs['title'])
+                weather_table[-1].append(img.attrs['title'])
+        weather_table.append([])
 
+    weather_table.pop()
 
+    return weather_table
+
+def transform_table(weather_table):
+    """ Changes values of parsed table into usable types
+        :input: weather_table
+        :return: transformed_weather_table
+        :rtype: list
+    """
+    pass
 
 
 page = get_page(time.localtime())
-get_weather_table(page)
-# print(page)
+wt =  get_weather_table(page)
+# print(wt)
+
+for item in wt:
+    print(wt.index(item), item)
+
+# print(get_weather_table(page))
