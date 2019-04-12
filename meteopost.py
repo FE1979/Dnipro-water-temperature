@@ -91,13 +91,18 @@ def transform_table(weather_table):
 
     return transformed_weather_table
 
+def run_meteopost(date=time.localtime()):
+    """ Runs all scraping proccess
+        :option by dafault: current date.
+                            Specify another to scrap exact day data
+        :return: weather data
+        :rtype: list
+    """
+    page = get_page(date)
+    weather_table =  get_weather_table(page)
 
-page = get_page(time.localtime())
-wt =  get_weather_table(page)
-twt = transform_table(wt)
-# print(wt)
+    return transform_table(weather_table)
 
-for item in twt:
-    print(twt.index(item), item)
-
-# print(get_weather_table(page))
+if __name__ == "__main__":
+    for item in run_meteopost():
+        print(item)
