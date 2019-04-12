@@ -1,5 +1,10 @@
 \Scripts
+\etc
+\Include
+\share
 pyvenv.cfg
+dev_notes.txt
+dev_diary.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
