@@ -84,8 +84,6 @@ def transform_table(weather_table):
 
         # get pressure, wind direction, wind speed and humidity
         for i in range(2,6):
-            print(item[i])
-            print(get_number(item[i]))
             transformed_weather_table[-1].append(get_number(item[i]))
 
         # get weather condition
