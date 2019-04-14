@@ -21,11 +21,14 @@ def get_page():
     return PAGE
 
 def get_text(PAGE):
-    """ Parse hydrology review from loaded page
+    """ Parse hydrology review from loaded page.
+        Returns 'weekend', 'no data' if no report for this day.
         :input: loaded html page
         :return: review header and text
         :rtype: tuple
     """
+
+    weekend_string = "У вихідні дні опис ситуації не оновлюється!"
 
     soup = BeautifulSoup(PAGE, "html.parser")
 
@@ -33,9 +36,11 @@ def get_text(PAGE):
     main_text = main_text.find('div')
     main_text = main_text.find('div')
 
-    review_header = main_text.find('p').text
-
-    return review_header, main_text.text
+    if main_text.text == weekend_string:
+        return 'weekend', 'no data'
+    else:
+        review_header = main_text.find('p').text
+        return review_header, main_text.text
 
 
 def get_water_temp(review_text):
@@ -114,6 +119,7 @@ def get_review_date(review_header):
 
 def run_meteo():
     """ Runs parsing meteo.gov.ua
+        Returns 'weekend', 'no data' if no report for this day.
         :return: parsed data
         :rtype: tuple of hte next data:
             :date:              numbers tuple of day, month and year
@@ -124,11 +130,14 @@ def run_meteo():
     PAGE = get_page()
     review_data = get_text(PAGE)
 
-    date = get_review_date(review_data[0])
-    water_temperature = get_water_temp(review_data[1])
-    reserve = get_reservoir_data(review_data[1])
+    if review_data[0] != 'weekend':
+        date = get_review_date(review_data[0])
+        water_temperature = get_water_temp(review_data[1])
+        reserve = get_reservoir_data(review_data[1])
+        return date, water_temperature, reserve
 
-    return date, water_temperature, reserve
+    else:
+        return review_data
 
 
 if __name__ == "__main__":
