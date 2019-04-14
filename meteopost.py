@@ -65,7 +65,7 @@ def transform_table(weather_table):
     def get_number(string):
         """ gets only number from a string """
         regex = r'\d+'
-        num_match = re.match(regex, item[2])
+        num_match = re.match(regex, string)
         return int(num_match.group())
 
 
@@ -83,7 +83,9 @@ def transform_table(weather_table):
         transformed_weather_table[-1].append(air_temp)
 
         # get pressure, wind direction, wind speed and humidity
-        for i in range(2,5):
+        for i in range(2,6):
+            print(item[i])
+            print(get_number(item[i]))
             transformed_weather_table[-1].append(get_number(item[i]))
 
         # get weather condition
