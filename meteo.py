@@ -75,6 +75,9 @@ def get_reservoir_data(review_text):
         :rtype: float
     """
 
+    reservoir_capacity = 43.848
+
+    """
     regex = r"Наповнення.+км"
     reservoirs_paragraph = re.findall(regex, review_text)
 
@@ -88,6 +91,15 @@ def get_reservoir_data(review_text):
     regex = r","
     reservoirs_fill = float(re.sub(regex, '.', reservoirs_data[0]))
     reservoirs_free = float(re.sub(regex, '.', reservoirs_data[1]))
+    """
+    regex = r"\d\d\W\d\d\d"
+
+    reservoirs_fill = re.findall(regex, review_text)[0]    
+
+    regex = r","
+    reservoirs_fill = float(re.sub(regex, '.', reservoirs_fill))
+
+    reservoirs_free = reservoir_capacity - reservoirs_fill
 
     return reservoirs_fill, reservoirs_free
 
