@@ -77,21 +77,6 @@ def get_reservoir_data(review_text):
 
     reservoir_capacity = 43.848
 
-    """
-    regex = r"Наповнення.+км"
-    reservoirs_paragraph = re.findall(regex, review_text)
-
-    regex = r"Наповнення.+становить "
-    reservoirs_text = re.sub(regex, '', reservoirs_paragraph[0])
-
-    regex = r"\d+\S*"
-    reservoirs_data = re.findall(regex, reservoirs_text)
-
-    # replace comma with point and convert to float
-    regex = r","
-    reservoirs_fill = float(re.sub(regex, '.', reservoirs_data[0]))
-    reservoirs_free = float(re.sub(regex, '.', reservoirs_data[1]))
-    """
     regex = r"\d\d\W\d\d\d"
 
     reservoirs_fill = re.findall(regex, review_text)[0]    
