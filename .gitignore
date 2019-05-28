@@ -5,6 +5,7 @@
 pyvenv.cfg
 dev_notes.txt
 dev_diary.txt
+app_procedures.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
