@@ -101,7 +101,7 @@ def run_meteopost(date=time.localtime()):
     page = get_page(date)
     weather_table =  get_weather_table(page)
 
-    return transform_table(weather_table)
+    return date, transform_table(weather_table)
 
 if __name__ == "__main__":
     for item in run_meteopost():
