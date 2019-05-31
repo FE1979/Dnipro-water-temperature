@@ -6,6 +6,10 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import time
+import json
+
+""" Configurations."""
+DATA_FILE = 'meteo_data.json'
 
 
 def get_page():
@@ -87,7 +91,7 @@ def get_reservoir_data(review_text):
 
     reservoirs_free = reservoir_capacity - reservoirs_fill
 
-    return reservoirs_fill, reservoirs_free
+    return reservoirs_free
 
 def get_review_date(review_header):
     """ Gets review date
@@ -137,8 +141,24 @@ def run_meteo():
         return date, water_temperature, reserve
 
     else:
-        return review_data
+        #return blank entry in case os weekend
+        return date, '', ''
+
+def update_meteo():
+    """ Updates meteo database with new record
+    """
+    with open(DATA_FILE, 'r') as f:
+        meteo_data = json.load(f)
+
+    new_data = run_meteo()
+
+    if meteo_data[-1][0] < new_data[0]:
+        meteo_data.append(new_data)
+
+    with open(DATA_FILE, 'w') as f:
+        json.dump(meteo_data, f)
 
 
 if __name__ == "__main__":
     print(run_meteo())
+    update_meteo()
