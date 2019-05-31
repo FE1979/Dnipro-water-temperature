@@ -5,6 +5,7 @@
 from bs4 import BeautifulSoup
 import requests
 import re
+import time
 
 
 def get_page():
@@ -79,7 +80,7 @@ def get_reservoir_data(review_text):
 
     regex = r"\d\d\W\d\d\d"
 
-    reservoirs_fill = re.findall(regex, review_text)[0]    
+    reservoirs_fill = re.findall(regex, review_text)[0]
 
     regex = r","
     reservoirs_fill = float(re.sub(regex, '.', reservoirs_fill))
@@ -99,19 +100,21 @@ def get_review_date(review_header):
 
     regex = r"год\."
 
+    #get date_string
     date_pos = re.search(regex, review_header)
     date_string = review_header[date_pos.end() + 1:]
-
+    #parse date text
     regex = r" "
     words = date_string.split(regex)
 
-    day = int(words[0])
+    day = words[0]
+    month = str(months.index(words[1]) + 1)
+    year = words[2]
+    #convert text into time and return epoch time in sec
+    date = '/'.join([day, month, year])
+    date_struct = time.strptime(date, '%d/%m/%Y')
 
-    month = months.index(words[1]) + 1
-
-    year = int(words[2])
-
-    return day, month, year
+    return time.mktime(date_struct)
 
 
 def run_meteo():
