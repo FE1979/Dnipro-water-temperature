@@ -16,7 +16,7 @@ def get_page(date):
     """
 
     URL = "https://meteopost.com/weather/archive/"
-    d = ('0' + str(date.tm_mday))[-2:]
+    d = str(date.tm_mday)[-2:]
     m = ('0' + str(date.tm_mon))[-2:]
     y = str(date.tm_year)
     param = {'arc': '1', 'city': 'UKKK', 'd': str(d), 'm': str(m), 'y': str(y)}
@@ -37,7 +37,6 @@ def get_weather_table(PAGE):
     soup = BeautifulSoup(PAGE, 'html.parser')
 
     table = soup.find('table', id='arc')
-
     rows = table.find_all('tr')
 
     weather_table = []
@@ -56,9 +55,10 @@ def get_weather_table(PAGE):
 
     return weather_table
 
-def transform_table(weather_table):
+def transform_table(weather_table, date):
     """ Changes values of parsed table into usable types
         :input: weather_table
+        :input: date of the report
         :return: transformed_weather_table
         :rtype: list
     """
@@ -68,15 +68,19 @@ def transform_table(weather_table):
         num_match = re.match(regex, string)
         return int(num_match.group())
 
-
     transformed_weather_table = []
+
 
     for item in weather_table:
         transformed_weather_table.append([])
         # get time
         regex = r'\d+:\d\d'
         time_match = re.match(regex, item[0])
-        transformed_weather_table[-1].append(time_match.group())
+
+        #make time stamp of the entry as epoch time
+        time_string = time.strftime('%Y/%m/%d ', date) + time_match.group()
+        epoch_time = time.mktime(time.strptime(time_string, '%Y/%m/%d %H:%M'))
+        transformed_weather_table[-1].append(epoch_time)
 
         # get air temp
         air_temp = int(item[1][:-1]) # remove grade sign
@@ -91,6 +95,7 @@ def transform_table(weather_table):
 
     return transformed_weather_table
 
+
 def run_meteopost(date=time.localtime()):
     """ Runs all scraping proccess
         :option by dafault: current date.
@@ -101,7 +106,7 @@ def run_meteopost(date=time.localtime()):
     page = get_page(date)
     weather_table =  get_weather_table(page)
 
-    return date, transform_table(weather_table)
+    return transform_table(weather_table, date)
 
 if __name__ == "__main__":
     for item in run_meteopost():
