@@ -72,29 +72,33 @@ def transform_table(weather_table, date):
         num_match = re.match(regex, string)
         return int(num_match.group())
 
-    transformed_weather_table = []
+    transformed_weather_table = {}
 
     for item in weather_table:
-        transformed_weather_table.append([])
+
+        # create data container
+        data = []
+
         # get time
         regex = r'\d+:\d\d'
         time_match = re.match(regex, item[0])
 
-        #make time stamp of the entry as epoch time
+        # make time stamp of the entry as epoch time
         time_string = time.strftime('%Y/%m/%d ', date) + time_match.group()
         epoch_time = time.mktime(time.strptime(time_string, '%Y/%m/%d %H:%M'))
-        transformed_weather_table[-1].append(epoch_time)
 
         # get air temp
         air_temp = int(item[1][:-1]) # remove grade sign
-        transformed_weather_table[-1].append(air_temp)
+        data.append(air_temp)
 
         # get pressure, wind direction, wind speed and humidity
         for i in range(2,6):
-            transformed_weather_table[-1].append(get_number(item[i]))
+            data.append(get_number(item[i]))
 
         # get weather condition
-        transformed_weather_table[-1].append(str(item[6]))
+        data.append(str(item[6]))
+        print(data)
+        transformed_weather_table[epoch_time] = data
 
     return transformed_weather_table
 
@@ -149,16 +153,16 @@ def run():
 
     #get report for each day
     for i in range(last_entry_date.tm_yday, current_date.tm_yday):
-        report_date = time.strptime(f"{report_date.tm_year} {i]", "%Y %j")
+        report_date = time.strptime(f"{report_date.tm_year} {i}", "%Y %j")
         meteo_report_table = run_meteopos(report_date)
         #append new data to the base. Existed entries will be overwritten
         data_base.update(meteo_report_table)
         #take a nap :)
-        time.sllep(1)
+        time.sleep(1)
 
     save_base(data_base)
 
 
 if __name__ == "__main__":
     for item in run_meteopost():
-        print(item)
+        print(item, run_meteopost()[item])
