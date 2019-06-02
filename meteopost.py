@@ -6,6 +6,10 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import time
+import json
+
+#Global variables.
+meteopost_file = 'meteopost_base.json'
 
 
 def get_page(date):
@@ -70,7 +74,6 @@ def transform_table(weather_table, date):
 
     transformed_weather_table = []
 
-
     for item in weather_table:
         transformed_weather_table.append([])
         # get time
@@ -95,6 +98,30 @@ def transform_table(weather_table, date):
 
     return transformed_weather_table
 
+def load_base():
+    """ Loads meteopost database
+        :rtype: list
+    """
+
+    with open(meteopost_file, 'r') as f:
+        data = json.load(f)
+
+    return data
+
+def save_base(data):
+    """ Saves database into a file
+        :input: database
+    """
+
+    with open(meteopost_file, 'w') as f:
+        json.dump(f, data)
+
+def get_last_entry_time(data):
+    """ Returns time stamp of last entry in base
+        :rtype: float
+    """
+
+    return data[-1][0]
 
 def run_meteopost(date=time.localtime()):
     """ Runs all scraping proccess
@@ -107,6 +134,30 @@ def run_meteopost(date=time.localtime()):
     weather_table =  get_weather_table(page)
 
     return transform_table(weather_table, date)
+
+def run():
+    """ Runs updating process from last date
+        Note: runs only in same year
+    """
+
+    data_base = load_base()
+    last_time = get_last_entry_time(data_base)
+
+    #get timestamp as stuct_time
+    last_entry_date = time.localtime(last_time)
+    current_date = time.localtime()
+
+    #get report for each day
+    for i in range(last_entry_date.tm_yday, current_date.tm_yday):
+        report_date = time.strptime(f"{report_date.tm_year} {i]", "%Y %j")
+        meteo_report_table = run_meteopos(report_date)
+        #append new data to the base. Existed entries will be overwritten
+        data_base.update(meteo_report_table)
+        #take a nap :)
+        time.sllep(1)
+
+    save_base(data_base)
+
 
 if __name__ == "__main__":
     for item in run_meteopost():
