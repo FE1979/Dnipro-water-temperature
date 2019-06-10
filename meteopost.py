@@ -127,7 +127,7 @@ def get_last_entry_time(data):
     sorted_keys = sorted(data.keys())
     return float(sorted_keys[-1])
 
-def run_meteopost(date=time.localtime()):
+def run_meteopost(date=time.gmtime()):
     """ Runs all scraping proccess
         :option by dafault: current date.
                             Specify another to scrap exact day data
@@ -151,7 +151,7 @@ def load_data_range(start_date, end_date):
 
     dbase = {}
     while date <= end_date:
-        date_entry = run_meteopost(time.localtime(date))
+        date_entry = run_meteopost(time.gmtime(date))
         dbase.update(date_entry)
         date += 86400
 
@@ -160,7 +160,7 @@ def load_data_range(start_date, end_date):
 def show_printable_data():
     data = load_base()
     for item in data:
-        print(time.localtime(float(item)), data[item])
+        print(time.gmtime(float(item)), data[item])
 
 
 def run():
@@ -173,11 +173,6 @@ def run():
     #get timestamp as struct_time
     current_date = time.time() // 86400 * 86400
     date = last_time // 86400 * 86400
-
-    print(current_date)
-    print(last_time)
-    print(time.localtime(current_date))
-    print(time.localtime(last_time))
 
     #get report for each day
     while date <= current_date:
@@ -192,13 +187,10 @@ def run():
 
 
 if __name__ == "__main__":
-    """for item in run_meteopost():
+    """
+    for item in run_meteopost():
         print(item, run_meteopost()[item])
     """
-
-    load_data_range("26032018", "10062019")
-
-    """
-    show_printable_data()
-    #run()
-    """
+    # load_data_range("26032018", "10062019")
+    # show_printable_data()
+    run()
