@@ -141,8 +141,8 @@ def run_meteo():
         return date, water_temperature, reserve
 
     else:
-        #return blank entry in case os weekend
-        return date, '', ''
+        #return None in case of weekend
+        return None
 
 def update_meteo():
     """ Updates meteo database with new record
@@ -152,8 +152,9 @@ def update_meteo():
 
     new_data = run_meteo()
 
-    if meteo_data[-1][0] < new_data[0]:
-        meteo_data.append(new_data)
+    if new_data is not None:
+        if meteo_data[-1][0] < new_data[0]:
+            meteo_data.append(new_data)
 
     with open(DATA_FILE, 'w') as f:
         json.dump(meteo_data, f)
