@@ -97,7 +97,6 @@ def transform_table(weather_table, date):
 
         # get weather condition
         data.append(str(item[6]))
-        print(data)
         transformed_weather_table[epoch_time] = data
 
     return transformed_weather_table
@@ -118,7 +117,7 @@ def save_base(data):
     """
 
     with open(meteopost_file, 'w') as f:
-        json.dump(f, data)
+        json.dump(data, f)
 
 def get_last_entry_time(data):
     """ Returns time stamp of last entry in base
@@ -139,6 +138,30 @@ def run_meteopost(date=time.localtime()):
 
     return transform_table(weather_table, date)
 
+def load_data_range(start_date, end_date):
+    """ Loads data in date range
+    """
+
+    start_date = time.strptime(start_date, "%d%m%Y")
+    start_date = time.mktime(start_date)
+    end_date = time.strptime(end_date, "%d%m%Y")
+    end_date = time.mktime(end_date)
+    date = start_date
+
+    dbase = {}
+    while date <= end_date:
+        date_entry = run_meteopost(time.localtime(date))
+        dbase.update(date_entry)
+        date += 86400
+
+    save_base(dbase)
+
+def show_printable_data():
+    data = load_base()
+    for item in data:
+        print(time.localtime(float(item)), data[item])
+
+
 def run():
     """ Runs updating process from last date
         Note: runs only in same year
@@ -147,7 +170,7 @@ def run():
     data_base = load_base()
     last_time = get_last_entry_time(data_base)
 
-    #get timestamp as stuct_time
+    #get timestamp as struct_time
     last_entry_date = time.localtime(last_time)
     current_date = time.localtime()
 
@@ -164,5 +187,8 @@ def run():
 
 
 if __name__ == "__main__":
-    for item in run_meteopost():
+    """for item in run_meteopost():
         print(item, run_meteopost()[item])
+    """
+    load_data_range("10052019", "12052019")
+    show_printable_data()
