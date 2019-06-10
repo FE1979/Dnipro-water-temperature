@@ -144,6 +144,13 @@ def run_meteo():
         #return None in case of weekend
         return None
 
+def get_last_entry_date(dbase):
+    """ Gets last date from database
+        input type: dictionary
+    """
+
+    return float(sorted(dbase.keys())[-1])
+
 def update_meteo():
     """ Updates meteo database with new record
     """
@@ -153,13 +160,13 @@ def update_meteo():
     new_data = run_meteo()
 
     if new_data is not None:
-        if meteo_data[-1][0] < new_data[0]:
-            meteo_data.append(new_data)
+        if get_last_entry_date(meteo_data) < new_data[0]:
+            meteo_data[new_data[0]] = new_data[1:]
 
     with open(DATA_FILE, 'w') as f:
         json.dump(meteo_data, f)
 
 
 if __name__ == "__main__":
-    print(run_meteo())
+    # print(run_meteo())
     update_meteo()
