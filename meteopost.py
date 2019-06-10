@@ -124,7 +124,8 @@ def get_last_entry_time(data):
         :rtype: float
     """
 
-    return data[-1][0]
+    sorted_keys = sorted(data.keys())
+    return float(sorted_keys[-1])
 
 def run_meteopost(date=time.localtime()):
     """ Runs all scraping proccess
@@ -164,24 +165,28 @@ def show_printable_data():
 
 def run():
     """ Runs updating process from last date
-        Note: runs only in same year
     """
 
     data_base = load_base()
     last_time = get_last_entry_time(data_base)
 
     #get timestamp as struct_time
-    last_entry_date = time.localtime(last_time)
-    current_date = time.localtime()
+    current_date = time.time() // 86400 * 86400
+    date = last_time // 86400 * 86400
+
+    print(current_date)
+    print(last_time)
+    print(time.localtime(current_date))
+    print(time.localtime(last_time))
 
     #get report for each day
-    for i in range(last_entry_date.tm_yday, current_date.tm_yday):
-        report_date = time.strptime(f"{report_date.tm_year} {i}", "%Y %j")
-        meteo_report_table = run_meteopos(report_date)
-        #append new data to the base. Existed entries will be overwritten
+    while date <= current_date:
+        meteo_report_table = run_meteopost(time.gmtime(date))
+        # append new data to the base. Existed entries will be overwritten
         data_base.update(meteo_report_table)
-        #take a nap :)
+        # take a nap :)
         time.sleep(1)
+        date += 86400
 
     save_base(data_base)
 
@@ -190,5 +195,10 @@ if __name__ == "__main__":
     """for item in run_meteopost():
         print(item, run_meteopost()[item])
     """
-    load_data_range("10052019", "12052019")
+
+    load_data_range("26032018", "10062019")
+
+    """
     show_printable_data()
+    #run()
+    """
