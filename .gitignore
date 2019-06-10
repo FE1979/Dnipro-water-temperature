@@ -8,6 +8,11 @@ pyvenv.cfg
 dev_notes.txt
 dev_diary.txt
 app_procedures.txt
+*.swp
+*.json
+load_meteo_base.py
+*.csv
+test.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
